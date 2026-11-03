@@ -1,0 +1,97 @@
+name: ProjectMe
+options:
+  bundleIdPrefix: nl.michelvanderput
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+  developmentLanguage: nl
+  xcodeVersion: "26.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    SWIFT_STRICT_CONCURRENCY: targeted   # code is Swift 6-klaar; zet op 6.0 zodra je wilt
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""            # vul je eigen Team ID in
+    TARGETED_DEVICE_FAMILY: "1"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+
+targets:
+  ProjectMe:
+    type: application
+    platform: iOS
+    sources:
+      - path: ProjectMe
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: nl.michelvanderput.projectme
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_ENTITLEMENTS: ProjectMe/Resources/ProjectMe.entitlements
+    info:
+      path: ProjectMe/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: Project Me
+        CFBundleDevelopmentRegion: nl
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        NSSupportsLiveActivities: true
+        NSSupportsLiveActivitiesFrequentUpdates: false
+        NSHealthShareUsageDescription: "Project Me leest je waterinname en mindful minuten om je voortgang te tonen."
+        NSHealthUpdateUsageDescription: "Project Me bewaart je waterinname en meditaties in Gezondheid, als je dat wilt."
+        NSPhotoLibraryUsageDescription: "Voeg een foto toe aan een blij moment in je boekje."
+    entitlements:
+      path: ProjectMe/Resources/ProjectMe.entitlements
+      properties:
+        com.apple.security.application-groups: [group.nl.michelvanderput.projectme]
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+    dependencies:
+      - target: ProjectMeWidgets
+        embed: true
+      - sdk: HealthKit.framework
+      - sdk: ActivityKit.framework
+      - sdk: WidgetKit.framework
+
+  ProjectMeWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: ProjectMeWidgets
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: nl.michelvanderput.projectme.widgets
+        CODE_SIGN_ENTITLEMENTS: ProjectMeWidgets/ProjectMeWidgets.entitlements
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME: WidgetBackground
+    info:
+      path: ProjectMeWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Project Me
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: ProjectMeWidgets/ProjectMeWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.nl.michelvanderput.projectme]
+    dependencies:
+      - sdk: SwiftUI.framework
+      - sdk: WidgetKit.framework
+      - sdk: ActivityKit.framework
+
+schemes:
+  ProjectMe:
+    build:
+      targets:
+        ProjectMe: all
+        ProjectMeWidgets: all
+    run:
+      config: Debug
